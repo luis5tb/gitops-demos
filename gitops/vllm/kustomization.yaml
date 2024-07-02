@@ -1,0 +1,2 @@
+resources:
+  - vllm-gitops-app.yaml

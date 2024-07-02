@@ -1,0 +1,15 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: promptflow-route
+  namespace: promptflow-ns
+spec:
+  to:
+    kind: Service
+    name: promptflow-svc
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+  wildcardPolicy: None

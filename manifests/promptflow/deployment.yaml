@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: promptflow-app
+  namespace: promptflow-ns
+spec:
+  selector:
+    matchLabels:
+      app: promptflow-app
+  template:
+    metadata:
+      labels:
+        app: promptflow-app
+    spec:
+      containers:
+      - name: promptflow-container
+        image: quay.io/ltomasbo/test-chat-flow:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: AZURE_TENANT_ID
+          valueFrom:
+            secretKeyRef:
+              name: connection-keys
+              key: azure-tenant-id
+        - name: AZURE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: connection-keys
+              key: azure-client-id
+        - name: AZURE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: connection-keys
+              key: azure-client-secret
+        - name: DEEPSPARSE-CONNECTION_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: connection-keys
+              key: deepsparse-connection-api-key

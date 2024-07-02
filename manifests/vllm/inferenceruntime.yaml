@@ -1,0 +1,31 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    openshift.io/display-name: deepsparse
+    serving.knative.openshift.io/enablePassthrough: "true"
+    sidecar.istio.io/inject: "true"
+    sidecar.istio.io/rewriteAppHTTPProbers: "true"
+  labels:
+    opendatahub.io/dashboard: "true"
+  name: deepsparse
+  namespace: vllm-ns
+spec:
+  predictor:
+    maxReplicas: 1
+    minReplicas: 1
+    model:
+      modelFormat:
+        name: onnx
+      name: ""
+      resources:
+        limits:
+          cpu: "8"
+          memory: 24Gi
+        requests:
+          cpu: "2"
+          memory: 16Gi
+      runtime: deepsparse
+      storage:
+        key: aws-connection-models
+        path: granite-7b-lab-sparse50-quant-cpu/deployment
