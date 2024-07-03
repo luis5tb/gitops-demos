@@ -2,4 +2,3 @@ kind: Namespace
 apiVersion: v1
 metadata:
   name: promptflow-ns
-  apiVersion: v1

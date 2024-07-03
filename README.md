@@ -83,6 +83,7 @@ data:
   AWS_SECRET_ACCESS_KEY: $(echo -n "$AWS_SECRET_ACCESS_KEY" | base64)
 
 type: Opaque
+EOF
 ```
 
 And apply it:
