@@ -39,7 +39,7 @@ metadata:
   namespace: $APP_NAMESPACE
 type: Opaque
 data:
-  YOUR_KEY: $(echo -n "$YOUR_KEY_VALUE" | base64)
+  your-key: $(echo -n "$YOUR_KEY_VALUE" | base64)
 EOF
 ```
 
