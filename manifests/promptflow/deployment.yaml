@@ -34,7 +34,7 @@ spec:
             secretKeyRef:
               name: connection-keys
               key: azure-client-secret
-        - name: DEEPSPARSE-CONNECTION_API_KEY
+        - name: DEEPSPARSE_CONNECTION_API_KEY
           valueFrom:
             secretKeyRef:
               name: connection-keys

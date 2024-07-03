@@ -1,5 +1,11 @@
 # Repository for GitOps demos
 
+## Ensure argoCD application controller has the needed rbac configuration
+
+```bash
+oc apply -f rbac_configuration/rbac.yaml
+```
+
 ## Apply a configuration
 
 To apply a configuration to deploy an application (vllm + promptflow using it in
@@ -19,6 +25,7 @@ Define the secret:
 
 ```bash
 export YOUR_KEY_VALUE=XXXX
+export APP_NAMESPACE=promptflow-ns
 ```
 
 And then define the secret:
@@ -29,10 +36,10 @@ kind: Secret
 apiVersion: v1
 metadata:
   name: connection-keys
-  namespace: rag-chatbot
+  namespace: $APP_NAMESPACE
 type: Opaque
-  data:
-    YOUR_KEY: $(echo -n "$YOUR_KEY_VALUE" | base64)
+data:
+  YOUR_KEY: $(echo -n "$YOUR_KEY_VALUE" | base64)
 EOF
 ```
 
