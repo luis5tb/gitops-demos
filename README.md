@@ -2,8 +2,27 @@
 
 ## Ensure argoCD application controller has the needed rbac configuration
 
+Apply rbac configuration, adapt the file as needed:
+
 ```bash
 oc apply -f rbac_configuration/rbac.yaml
+```
+
+Ensure that the ArgoCD object have `default_policy: role:admin`, or configure the specific group policies as needed
+
+And also ensure that, if some objects need to be skipped from the sync, to also include the next annotation in the ArgoCD object:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCD
+metadata:
+  name: openshift-gitops
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource
+spec:
+  ...
 ```
 
 ## Apply a configuration
