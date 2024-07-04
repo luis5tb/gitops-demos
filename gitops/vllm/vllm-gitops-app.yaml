@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: vllm-gitops-app
   namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
 spec:
   destination:
     namespace: openshift-gitops
