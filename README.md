@@ -25,6 +25,22 @@ spec:
   ...
 ```
 
+### Resource tracking
+When creating InferenceServices, there is a problem with couple of routes created on the istio-system namespace that do not have owner reference yet having the same label. For that reason we need to configure ArgoCD so that resource tracking method only considers annotations (instead of annotations+labels):
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCD
+metadata:
+  name: openshift-gitops
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource
+spec:
+  resourceTrackingMethod: annotation
+  ...
+```
+
 ## Apply a configuration
 
 To apply a configuration to deploy an application (vllm + promptflow using it in
