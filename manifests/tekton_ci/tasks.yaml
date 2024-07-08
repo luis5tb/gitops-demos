@@ -14,9 +14,10 @@ spec:
       default: main
   steps:
     - name: clone
-      image: 'alpine:latest'
+      image: 'registry.access.redhat.com/ubi9/ubi:latest'
       script: |
         #!/bin/sh
+        yum install -y git
         git clone $(params.repo-url) /workspace/source
         cd /workspace/source
         git checkout $(params.branch-name)
