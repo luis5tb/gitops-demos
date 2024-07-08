@@ -17,18 +17,12 @@ spec:
       image: 'alpine:latest'
       script: |
         #!/bin/sh
-        git clone $(params.repo-url) /workspace/output/source
-        cd /workspace/output/source
+        git clone $(params.repo-url) /workspace/source
+        cd /workspace/source
         git checkout $(params.branch-name)
-      volumeMounts:
-        - name: output
-          mountPath: /workspace/output
   workspaces:
-    - name: output
+    - name: source
       description: Workspace to place the cloned repository
-  volumes:
-    - name: output
-      emptyDir: {}
 
 ---
 apiVersion: tekton.dev/v1beta1
@@ -46,32 +40,24 @@ spec:
       image: registry.access.redhat.com/ubi9/python-311'
       script: |
         #!/bin/sh
-        rm -rf /workspace/container_dir
+        rm -rf /workspace/source/container_dir
 
         # Create venv with the needed requirements
         python -m venv venv
         source venv/bin/activate
-        pip install -r /workspace/$(params.flow-name)/requirements.txt
+        pip install -r /workspace/source/$(params.flow-name)/requirements.txt
 
         # Create container_dir folder with the files to build the promptflow
-        pf flow build --source ./rag-flow --output container_dir --format docker
+        pf flow build --source /workspace/source/rag-flow --output /workspace/source/container_dir --format docker
 
         # Copy needed files
-        cp /workspace/$(params.flow-name)/base_Dockerfile /workspace/container_dir/Dockerfile
-        cp /workspace/$(params.flow-name)/edited_start.sh /workspace/container_dir/start.sh
-        cp /workspace/$(params.flow-name)/edited_run /workspace/container_dir/runit/promptflow-serve/run
-        podman push $(params.image-url)
-      securityContext:
-        privileged: true
-      volumeMounts:
-        - name: workspace
-          mountPath: /workspace
+        cp /workspace/source/$(params.flow-name)/base_Dockerfile /workspace/source/container_dir/Dockerfile
+        cp /workspace/source/$(params.flow-name)/edited_start.sh /workspace/source/container_dir/start.sh
+        cp /workspace/source/$(params.flow-name)/edited_run /workspace/source/container_dir/runit/promptflow-serve/run
   workspaces:
     - name: source
       description: Workspace containing the source code to build
-  volumes:
-    - name: workspace
-      emptyDir: {}
+
 
 ---
 apiVersion: tekton.dev/v1beta1
@@ -99,16 +85,10 @@ spec:
       script: |
         #!/bin/sh
         podman login -u $(params.username) -p $(params.password) $(params.registry)
-        podman build -t $(params.image-url) /workspace/container_dir/
+        podman build -t $(params.image-url) /workspace/source/container_dir/
         podman push $(params.image-url)
-      securityContext:
-        privileged: true
-      volumeMounts:
-        - name: workspace
-          mountPath: /workspace
+#      securityContext:
+#        privileged: true
   workspaces:
     - name: source
       description: Workspace containing the source code to build
-  volumes:
-    - name: workspace
-      emptyDir: {}
