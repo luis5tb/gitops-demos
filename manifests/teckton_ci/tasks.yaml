@@ -1,0 +1,111 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone
+spec:
+  params:
+    - name: repo-url
+      description: The git repository URL to clone
+      type: string
+    - name: branch-name
+      description: The branch to checkout
+      type: string
+      default: main
+  steps:
+    - name: clone
+      image: 'alpine:latest'
+      script: |
+        #!/bin/sh
+        git clone $(params.repo-url) /workspace/output/source
+        cd /workspace/output/source
+        git checkout $(params.branch-name)
+      volumeMounts:
+        - name: output
+          mountPath: /workspace/output
+  workspaces:
+    - name: output
+      description: Workspace to place the cloned repository
+  volumes:
+    - name: output
+      emptyDir: {}
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: prepare-promptflow-dockerfile
+spec:
+  params:
+    - name: flow-name
+      description: The name of the folder containing the promptflow
+      type: string
+  steps:
+    - name: build-and-push
+      image: registry.access.redhat.com/ubi9/python-311'
+      script: |
+        #!/bin/sh
+        rm -rf /workspace/container_dir
+
+        # Create venv with the needed requirements
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r /workspace/$(params.flow-name)/requirements.txt
+
+        # Create container_dir folder with the files to build the promptflow
+        pf flow build --source ./rag-flow --output container_dir --format docker
+
+        # Copy needed files
+        cp /workspace/$(params.flow-name)/base_Dockerfile /workspace/container_dir/Dockerfile
+        cp /workspace/$(params.flow-name)/edited_start.sh /workspace/container_dir/start.sh
+        cp /workspace/$(params.flow-name)/edited_run /workspace/container_dir/runit/promptflow-serve/run
+        podman push $(params.image-url)
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+  workspaces:
+    - name: source
+      description: Workspace containing the source code to build
+  volumes:
+    - name: workspace
+      emptyDir: {}
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-image-podman
+spec:
+  params:
+    - name: image-url
+      description: The URL of the image to build and push
+      type: string
+    - name: username
+      description: The username for the container registry
+      type: string
+    - name: password
+      description: The password for the container registry
+      type: string
+    - name: registry
+      description: The registry URL
+      type: string
+  steps:
+    - name: build-and-push
+      image: quay.io/podman/stable:latest
+      script: |
+        #!/bin/sh
+        podman login -u $(params.username) -p $(params.password) $(params.registry)
+        podman build -t $(params.image-url) /workspace/container_dir/
+        podman push $(params.image-url)
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+  workspaces:
+    - name: source
+      description: Workspace containing the source code to build
+  volumes:
+    - name: workspace
+      emptyDir: {}

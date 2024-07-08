@@ -1,0 +1,73 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: promptflow-pipeline
+spec:
+  params:
+    - name: repo-url
+      description: The git repository URL to clone
+      type: string
+    - name: branch-name
+      description: The branch to checkout
+      type: string
+      default: main
+    - name: flow-name
+      description: The name of the folder containing the promptflow
+      type: string
+    - name: image-url
+      description: The URL of the image to build and push
+      type: string
+    - name: username
+      description: The username for the container registry
+      type: string
+    - name: password
+      description: The password for the container registry
+      type: string
+    - name: registry
+      description: The registry URL
+      type: string
+  workspaces:
+    - name: shared-workspace
+      description: A shared workspace for the pipeline
+  tasks:
+    - name: clone-repo
+      taskRef:
+        name: git-clone
+      params:
+        - name: repo-url
+          value: $(params.repo-url)
+        - name: branch-name
+          value: $(params.branch-name)
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+
+    - name: prepare-dockerfile
+      taskRef:
+        name: prepare-promptflow-dockerfile
+      params:
+        - name: flow-name
+          value: $(params.flow-name)
+      runAfter:
+        - clone-repo
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    - name: build-image
+      taskRef:
+        name: build-image-podman
+      params:
+        - name: image-url
+          value: $(params.image-url)
+        - name: username
+          value: $(params.username)
+        - name: password
+          value: $(params.password)
+        - name: registry
+          value: $(params.registry)
+      runAfter:
+        - prepare-dockerfile
+      workspaces:
+        - name: source
+          workspace: shared-workspace

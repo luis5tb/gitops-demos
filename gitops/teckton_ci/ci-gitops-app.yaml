@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ci-gitops-app
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: openshift-gitops
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: manifests/teckton_ci
+    repoURL: https://github.com/luis5tb/gitops-demos.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - RespectIgnoreDifferences=true
+      - CreateNamespace=true
+      - PruneLast=true

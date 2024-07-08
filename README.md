@@ -41,7 +41,7 @@ spec:
   ...
 ```
 
-## Apply a configuration
+## Apply a configuration to deploy a vLLM + promptflow App
 
 To apply a configuration to deploy an application (vllm + promptflow using it in
 this case):
@@ -51,10 +51,10 @@ oc apply -f gitops/vllm
 oc apply -f gitops/promptflow
 ```
 
-## Notes
+### Notes
 Secrets are not included so you need to create them manually. 
 
-### For promptflow app
+#### For promptflow app
 
 Define the secret:
 
@@ -83,7 +83,7 @@ And create it:
 oc apply -f secret.yaml
 ```
 
-### For vllm model serving
+#### For vllm model serving
 
 Define the required env vars with proper values:
 
@@ -125,3 +125,45 @@ And apply it:
 ```bash
 oc apply -f dataconnection.yaml
 ```
+
+## Apply a configuration to deploy a tetkon CI pipeline: 
+
+```bash
+oc apply -f gitops/teckton_ci
+```
+
+Then, to execute it you can create and apply something like the next (either on the CLI or via console UI):
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: build-pipeline-run
+spec:
+  pipelineRef:
+    name: build-pipeline
+  params:
+    - name: repo-url
+      value: https://github.com/your-repo/your-project.git
+    - name: branch-name
+      value: your-branch
+    - name: image-url
+      value: your-registry/your-image:latest
+    - name: username
+      value: your-username
+    - name: password
+      value: your-password
+    - name: registry
+      value: your-registry
+    - name: flow-name
+      value: your-flow
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes: [ "ReadWriteOnce" ]
+          resources:
+            requests:
+              storage: 1Gi
+```
+
