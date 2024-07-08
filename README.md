@@ -166,4 +166,3 @@ spec:
             requests:
               storage: 1Gi
 ```
-

@@ -42,7 +42,7 @@ spec:
       description: The name of the folder containing the promptflow
       type: string
   steps:
-    - name: build-and-push
+    - name: prepare-container-dir
       image: registry.access.redhat.com/ubi9/python-311'
       script: |
         #!/bin/sh
