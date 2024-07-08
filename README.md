@@ -129,7 +129,7 @@ oc apply -f dataconnection.yaml
 ## Apply a configuration to deploy a tetkon CI pipeline: 
 
 ```bash
-oc apply -f gitops/teckton_ci
+oc apply -f gitops/tekton_ci
 ```
 
 Then, to execute it you can create and apply something like the next (either on the CLI or via console UI):

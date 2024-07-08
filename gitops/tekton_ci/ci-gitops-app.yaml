@@ -9,7 +9,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: manifests/teckton_ci
+    path: manifests/tekton_ci
     repoURL: https://github.com/luis5tb/gitops-demos.git
     targetRevision: main
   syncPolicy:
