@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: git-clone
+  namespace: promptflow-pipeline-ns
 spec:
   params:
     - name: repo-url
@@ -34,6 +35,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: prepare-promptflow-dockerfile
+  namespace: promptflow-pipeline-ns
 spec:
   params:
     - name: flow-name
@@ -76,6 +78,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: build-image-podman
+  namespace: promptflow-pipeline-ns
 spec:
   params:
     - name: image-url
