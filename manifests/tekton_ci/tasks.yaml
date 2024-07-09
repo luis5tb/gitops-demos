@@ -14,7 +14,7 @@ spec:
       default: main
   steps:
     - name: clone
-      image: 'registry.access.redhat.com/ubi9/ubi:latest'
+      image: registry.access.redhat.com/ubi9/ubi:latest
       script: |
         #!/bin/sh
         yum install -y git
@@ -38,7 +38,7 @@ spec:
       type: string
   steps:
     - name: prepare-container-dir
-      image: registry.access.redhat.com/ubi9/python-311'
+      image: registry.access.redhat.com/ubi9/python-311
       script: |
         #!/bin/sh
         rm -rf /workspace/source/container_dir
