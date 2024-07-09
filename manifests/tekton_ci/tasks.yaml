@@ -36,6 +36,12 @@ spec:
     - name: flow-name
       description: The name of the folder containing the promptflow
       type: string
+    - name: api-key
+      description: The LLM API KEY
+      type: string
+    - name: api-base
+      description: The LLM API URL
+      type: string
   steps:
     - name: prepare-container-dir
       image: registry.access.redhat.com/ubi9/python-311
@@ -48,12 +54,17 @@ spec:
         source venv/bin/activate
         pip install -r /workspace/source/flows/$(params.flow-name)/requirements.txt
 
+        # Create the connection:
+        pf connection create --file /workspace/source/flows/$(params.flow-name)/base_custom_connection.yaml \
+            --set configs.api_base=$(params.api-base) secrets.api_key=$(params.api-key) --name deepsparse_connection
+
         # Create container_dir folder with the files to build the promptflow
         pf flow build --source /workspace/source/flows/$(params.flow-name) --output /workspace/source/flows/container_dir --format docker
 
         # Copy needed files
         cp /workspace/source/flows/$(params.flow-name)/base_Dockerfile /workspace/source/flows/container_dir/Dockerfile
         cp /workspace/source/flows/$(params.flow-name)/edited_start.sh /workspace/source/flows/container_dir/start.sh
+        mkdir -p /workspace/source/flows/container_dir/runit/promptflow-serve/
         cp /workspace/source/flows/$(params.flow-name)/edited_run /workspace/source/flows/container_dir/runit/promptflow-serve/run
   workspaces:
     - name: source
