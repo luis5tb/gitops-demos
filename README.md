@@ -135,13 +135,14 @@ oc apply -f gitops/tekton_ci
 Then, to execute it you can create and apply something like the next (either on the CLI or via console UI):
 
 ```yaml
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
-  name: build-pipeline-run
+  name: promptflow-pipeline-run
+  namespace: promptflow-pipeline-ns
 spec:
   pipelineRef:
-    name: build-pipeline
+    name: promptflow-pipeline
   params:
     - name: repo-url
       value: https://github.com/your-repo/your-project.git

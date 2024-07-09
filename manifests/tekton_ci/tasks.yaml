@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: git-clone
@@ -26,7 +26,7 @@ spec:
       description: Workspace to place the cloned repository
 
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: prepare-promptflow-dockerfile
@@ -61,7 +61,7 @@ spec:
 
 
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: build-image-podman
@@ -88,8 +88,6 @@ spec:
         podman login -u $(params.username) -p $(params.password) $(params.registry)
         podman build -t $(params.image-url) /workspace/source/container_dir/
         podman push $(params.image-url)
-#      securityContext:
-#        privileged: true
   workspaces:
     - name: source
       description: Workspace containing the source code to build
