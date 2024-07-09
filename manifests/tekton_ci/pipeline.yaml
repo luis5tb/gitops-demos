@@ -40,7 +40,7 @@ spec:
         - name: branch-name
           value: $(params.branch-name)
       workspaces:
-        - name: source
+        - name: repo
           workspace: shared-workspace
 
     - name: prepare-dockerfile

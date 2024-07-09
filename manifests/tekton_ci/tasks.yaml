@@ -22,7 +22,7 @@ spec:
         cd /workspace/source
         git checkout $(params.branch-name)
   workspaces:
-    - name: source
+    - name: repo
       description: Workspace to place the cloned repository
 
 ---
