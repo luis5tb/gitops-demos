@@ -143,6 +143,7 @@ metadata:
 spec:
   pipelineRef:
     name: promptflow-pipeline
+  serviceAccountName: tekton-sa
   params:
     - name: repo-url
       value: https://github.com/your-repo/your-project.git
@@ -158,6 +159,10 @@ spec:
       value: your-registry
     - name: flow-name
       value: your-flow
+    - name: api-base
+      value: your-vllm-url
+    - name: api-key
+      value: your-vllm-token
   workspaces:
     - name: shared-workspace
       volumeClaimTemplate:

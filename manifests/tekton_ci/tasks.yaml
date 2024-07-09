@@ -99,6 +99,8 @@ spec:
         podman login -u $(params.username) -p $(params.password) $(params.registry)
         podman build -t $(params.image-url) /workspace/source/flows/container_dir/
         podman push $(params.image-url)
+      securityContext:
+        privileged: true
   workspaces:
     - name: source
       description: Workspace containing the source code to build
