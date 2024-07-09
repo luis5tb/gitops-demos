@@ -18,11 +18,11 @@ spec:
       script: |
         #!/bin/sh
         yum install -y git
-        git clone $(params.repo-url) /workspace/source
-        cd /workspace/source
+        git clone $(params.repo-url) /workspace/source/flows
+        cd /workspace/source/flows
         git checkout $(params.branch-name)
   workspaces:
-    - name: repo
+    - name: source
       description: Workspace to place the cloned repository
 
 ---
@@ -41,20 +41,20 @@ spec:
       image: registry.access.redhat.com/ubi9/python-311
       script: |
         #!/bin/sh
-        rm -rf /workspace/source/container_dir
+        rm -rf /workspace/source/flows/container_dir
 
         # Create venv with the needed requirements
         python -m venv venv
         source venv/bin/activate
-        pip install -r /workspace/source/$(params.flow-name)/requirements.txt
+        pip install -r /workspace/source/flows/$(params.flow-name)/requirements.txt
 
         # Create container_dir folder with the files to build the promptflow
-        pf flow build --source /workspace/source/rag-flow --output /workspace/source/container_dir --format docker
+        pf flow build --source /workspace/source/flows/$(params.flow-name) --output /workspace/source/flows/container_dir --format docker
 
         # Copy needed files
-        cp /workspace/source/$(params.flow-name)/base_Dockerfile /workspace/source/container_dir/Dockerfile
-        cp /workspace/source/$(params.flow-name)/edited_start.sh /workspace/source/container_dir/start.sh
-        cp /workspace/source/$(params.flow-name)/edited_run /workspace/source/container_dir/runit/promptflow-serve/run
+        cp /workspace/source/flows/$(params.flow-name)/base_Dockerfile /workspace/source/flows/container_dir/Dockerfile
+        cp /workspace/source/flows/$(params.flow-name)/edited_start.sh /workspace/source/flows/container_dir/start.sh
+        cp /workspace/source/flows/$(params.flow-name)/edited_run /workspace/source/flows/container_dir/runit/promptflow-serve/run
   workspaces:
     - name: source
       description: Workspace containing the source code to build
@@ -86,7 +86,7 @@ spec:
       script: |
         #!/bin/sh
         podman login -u $(params.username) -p $(params.password) $(params.registry)
-        podman build -t $(params.image-url) /workspace/source/container_dir/
+        podman build -t $(params.image-url) /workspace/source/flows/container_dir/
         podman push $(params.image-url)
   workspaces:
     - name: source
