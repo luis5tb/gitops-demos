@@ -143,7 +143,9 @@ metadata:
 spec:
   pipelineRef:
     name: promptflow-pipeline
-  serviceAccountName: tekton-sa
+  taskRunSpecs:
+    - pipelineTaskName: build-image
+      serviceAccountName: tekton-sa
   params:
     - name: repo-url
       value: https://github.com/your-repo/your-project.git
