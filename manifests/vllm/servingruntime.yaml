@@ -5,39 +5,30 @@ metadata:
     opendatahub.io/accelerator-name: ""
     opendatahub.io/apiProtocol: REST
     opendatahub.io/template-display-name: DeepSparse Runtime
-    opendatahub.io/template-name: deepsparse-runtime
-    openshift.io/display-name: deepsparse
+    opendatahub.io/template-name: vllm-runtime
+    openshift.io/display-name: vllm
   labels:
     opendatahub.io/dashboard: "true"
-  name: deepsparse
+  name: vllm
   namespace: vllm-ns
 spec:
   containers:
-  - args:
-    - cp -r /mnt/models/* /mnt/models-aux && deepsparse.server --integration openai
-      --port 8080 --task text_generation --model_path /mnt/models-aux
-    command:
-    - /bin/sh
-    - -c
-    image: quay.io/rh-aiservices-bu/deepsparse-openai-ubi9:0.2
-    name: kserve-container
-    ports:
-    - containerPort: 8080
-      protocol: TCP
-    volumeMounts:
-    - mountPath: /mnt/models-aux
-      name: kserve-aux
-      readOnly: false
-    - mountPath: /dev/shm
-      name: shm
+    - args:
+        - --model
+        - /mnt/models/
+        - --download-dir
+        - /models-cache
+        - --port
+        - "8080"
+        - --max-model-len
+        - "6144"
+      image: quay.io/rh-aiservices-bu/vllm-openai-ubi9:0.4.2
+      name: kserve-container
+      ports:
+        - containerPort: 8080
+          name: http1
+          protocol: TCP
   multiModel: false
   supportedModelFormats:
-  - autoSelect: true
-    name: onnx
-  volumes:
-  - emptyDir: {}
-    name: kserve-aux
-  - emptyDir:
-      medium: Memory
-      sizeLimit: 2Gi
-    name: shm
+    - autoSelect: true
+      name: pytorch

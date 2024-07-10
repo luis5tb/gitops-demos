@@ -48,6 +48,7 @@ this case):
 
 ```bash
 oc apply -f gitops/vllm
+oc apply -f gitops/deepsparse
 oc apply -f gitops/promptflow
 ```
 
@@ -83,7 +84,7 @@ And create it:
 oc apply -f secret.yaml
 ```
 
-#### For vllm model serving
+#### For vllm/deepsparse model serving
 
 Define the required env vars with proper values:
 
@@ -120,6 +121,8 @@ data:
 type: Opaque
 EOF
 ```
+
+Note you need to adapt the namespace to `vllm-ns` or `deepsparse-ns` depending on the InferenceService selected
 
 And apply it:
 ```bash

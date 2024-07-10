@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: deepsparse-ns
+  annotations:
+    openshift.io/description: "DeepSparse Workspace"
+    openshift.io/display-name: 'DeepSparse Workspace'
+  labels:
+    kubernetes.io/metadata.name: "deepsparse-ns"
+    modelmesh-enabled: 'false'
+    opendatahub.io/dashboard: 'true'

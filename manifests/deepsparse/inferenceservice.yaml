@@ -2,7 +2,7 @@ apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   annotations:
-    openshift.io/display-name: vllm
+    openshift.io/display-name: deepsparse
     serving.knative.openshift.io/enablePassthrough: "true"
     sidecar.istio.io/inject: "true"
     sidecar.istio.io/rewriteAppHTTPProbers: "true"
@@ -10,25 +10,24 @@ metadata:
     argocd.argoproj.io/sync-options: Prune=false
   labels:
     opendatahub.io/dashboard: "true"
-  name: vllm
-  namespace: vllm-ns
+  name: deepsparse
+  namespace: deepsparse-ns
 spec:
   predictor:
     maxReplicas: 1
     minReplicas: 1
     model:
       modelFormat:
-        name: pytorch
+        name: onnx
       name: ""
       resources:
         limits:
           cpu: "8"
           memory: 24Gi
-          nvidia.com/gpu: '1'
         requests:
           cpu: "4"
-          nvidia.com/gpu: '1'
-      runtime: vllm
+          memory: 20Gi
+      runtime: deepsparse
       storage:
         key: aws-connection-models
-        path: granite-7b-lab-gpu
+        path: granite-7b-lab-sparse50-quant-cpu/deployment
