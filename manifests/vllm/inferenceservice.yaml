@@ -25,8 +25,8 @@ spec:
           cpu: "8"
           memory: 24Gi
         requests:
-          cpu: "2"
-          memory: 16Gi
+          cpu: "4"
+          memory: 20Gi
       runtime: deepsparse
       storage:
         key: aws-connection-models
