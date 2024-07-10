@@ -3,6 +3,8 @@ apiVersion: route.openshift.io/v1
 metadata:
   name: promptflow-route
   namespace: promptflow-ns
+  annotations:
+    haproxy.router.openshift.io/timeout: 300000ms
 spec:
   to:
     kind: Service
