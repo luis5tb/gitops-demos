@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: promptflow-container
-        image: quay.io/ltomasbo/promptflow-app:latest
+        image: quay.io/ltomasbo/promptflow-app:test
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
