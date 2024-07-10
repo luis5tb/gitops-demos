@@ -12,6 +12,12 @@ spec:
       description: The branch to checkout
       type: string
       default: main
+    - name: git-user
+      description: Git username
+      type: string
+    - name: git-token
+      description: Git Token to clone repositories
+      type: string
     - name: flow-name
       description: The name of the folder containing the promptflow
       type: string
@@ -45,6 +51,10 @@ spec:
           value: $(params.repo-url)
         - name: branch-name
           value: $(params.branch-name)
+        - name: git-user
+          value: $(params.git-user)
+        - name: git-token
+          value: $(params.git-token)
       workspaces:
         - name: source
           workspace: shared-workspace

@@ -12,13 +12,19 @@ spec:
       description: The branch to checkout
       type: string
       default: main
+    - name: git-user
+      description: Git username
+      type: string
+    - name: git-token
+      description: Git Token to clone repositories
+      type: string
   steps:
     - name: clone
       image: registry.access.redhat.com/ubi9/ubi:latest
       script: |
         #!/bin/sh
         yum install -y git
-        git clone $(params.repo-url) /workspace/source/flows
+        git clone https://$(params.git-user):$(params.git-token)@$(params.repo-url).git /workspace/source/flows
         cd /workspace/source/flows
         git checkout $(params.branch-name)
   workspaces:

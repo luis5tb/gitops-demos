@@ -151,6 +151,10 @@ spec:
       value: https://github.com/your-repo/your-project.git
     - name: branch-name
       value: your-branch
+    - name: git-user
+      value: your-git-username
+    - name: git-token
+      value: your-git-token
     - name: image-url
       value: your-registry/your-image:latest
     - name: username
