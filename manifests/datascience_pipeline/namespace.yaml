@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  #name: '{{params.namespace}}'
+  name: databrick-rag-ns
+  annotations:
+    openshift.io/description: "Databricks RAG Workspace"
+    openshift.io/display-name: 'Databricks RAG Workspace'
+  labels:
+    #kubernetes.io/metadata.name: '{{params.namespace}}'
+    kubernetes.io/metadata.name: databricks-rag-ns
+    modelmesh-enabled: 'false'
+    opendatahub.io/dashboard: 'true'
